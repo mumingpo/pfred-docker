@@ -1,0 +1,11 @@
+python=3.10
+numpy=1.26.0
+r=4.3.1
+r-pls=2.8_2
+r-randomForest=4.7_1.1
+r-e1071=1.7_13
+rpy2=3.5.11
+django=4.1
+importlib_resources=6.1.0
+simplejson=3.17.6
+tqdm=4.65.0

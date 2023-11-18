@@ -1,2 +1,6 @@
-*.tar*
-*.zip*
+pfred-django-backend/scripts/bowtie
+pfred-django-backend/env
+pfred-django-backend/scratch
+__pycache__
+*.pyc
+*.sqlite3
