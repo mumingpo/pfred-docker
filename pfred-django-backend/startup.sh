@@ -23,10 +23,15 @@ then
     echo "Downloading bowtie..."
 
     cd $PFRED_HOME/scripts
-    for letter in "a b c d"
-    do
-        wget https://github.com/pfred/pfred-docker/releases/download/v1.0-alpha/bowtie.tar.gz.parta$letter
-    done
+
+    URL_LIST="https://github.com/pfred/pfred-docker/releases/download/v1.0-alpha/bowtie.tar.gz.partaa \
+        https://github.com/pfred/pfred-docker/releases/download/v1.0-alpha/bowtie.tar.gz.partab \
+        https://github.com/pfred/pfred-docker/releases/download/v1.0-alpha/bowtie.tar.gz.partac \
+        https://github.com/pfred/pfred-docker/releases/download/v1.0-alpha/bowtie.tar.gz.partad"
+
+    echo $URL_LIST | xargs -n 1 -P 4 wget -q
+
+    echo "Bowtie downloaded"
 
     cat bowtie.tar.gz.parta* > bowtie.tar.gz
     rm bowtie.tar.gz.parta*
