@@ -4,11 +4,11 @@ services:
   pfred-service:
     image: pfredimg:latest
     ports:
-      - "8000:8000"
+      - "80:8000"
     container_name:
-      pfredservice
+      "pfred"
     volumes:
-      - pfred-vol:/home/pfred
+      - pfred-volume:/home/pfred
 
 volumes:
-  pfred-vol:
+  pfred-volume:
