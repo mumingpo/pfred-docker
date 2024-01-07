@@ -33,7 +33,7 @@ DG_3PRIME_DANGLING_U = {
     "GU": -0.6,
     "UU": -0.1,
 }
-complement_dict = {
+COMPLEMENT_DICT = {
     'A': 'U',
     'U': 'A',
     'C': 'G',
@@ -50,6 +50,7 @@ def get_duplet(s: str, i: int) -> str:
     return s[i:i+2]
 
 def thermodynamic(sequences: dict[str, str]):
+    thermo_descriptors = dict()
 
     for key in sequences.keys():
         seq = sequences[key]
@@ -62,8 +63,8 @@ def thermodynamic(sequences: dict[str, str]):
     
 
         self_symmetric = True
-        for i in range(len(seq) / 2):
-            if seq[i] != complement_dict[seq[-i - 1]]:
+        for i in range(len(seq) // 2 + 1):
+            if seq[i] != COMPLEMENT_DICT[seq[-i - 1]]:
                 self_symmetric = False
                 break
         
@@ -92,29 +93,29 @@ def thermodynamic(sequences: dict[str, str]):
 
             total_dHSG += dHSG
 
-            if (self_symmetric):
-                dHSG_self = total_dHSG + THERMOPARAMETER_SET["Initiation"] + THERMOPARAMETER_SET["Symmetry_self"]
-                if (test_AU):
-                    dHSG_self = n_AU * THERMOPARAMETER_SET["terminal_AU"]
-                tm_self = (dHSG_self[ENTHALPY] * 1000) / (dHSG_self[ENTROPY] + (1.987 * np.log(TOT_STRAND_CONCENTRATION_SELF))) - 273.15
+        if (self_symmetric):
+            dHSG_self = total_dHSG + THERMOPARAMETER_SET["Initiation"] + THERMOPARAMETER_SET["Symmetry_self"]
+            if (test_AU):
+                dHSG_self = n_AU * THERMOPARAMETER_SET["terminal_AU"]
+            tm_self = (dHSG_self[ENTHALPY] * 1000) / (dHSG_self[ENTROPY] + (1.987 * np.log(TOT_STRAND_CONCENTRATION_SELF))) - 273.15
 
-                thermo_list.extend(dHSG_self)
-                thermo_list.append(tm_self)
-            else:
-                dHSG_nonself = total_dHSG + THERMOPARAMETER_SET["Initiation"] + THERMOPARAMETER_SET["Symmetry_nonSelf"]
-                if (test_AU):
-                    dHSG_self = n_AU * THERMOPARAMETER_SET["terminal_AU"]
-                tm_nonself = (dHSG_nonself[ENTHALPY] * 1000) / (dHSG_nonself[ENTROPY] + (1.987 * np.log(TOT_STRAND_CONCENTRATION_NONSELF / 4))) - 273.15
+            thermo_list.extend(dHSG_self)
+            thermo_list.append(tm_self)
+        else:
+            dHSG_nonself = total_dHSG + THERMOPARAMETER_SET["Initiation"] + THERMOPARAMETER_SET["Symmetry_nonSelf"]
+            if (test_AU):
+                dHSG_self = n_AU * THERMOPARAMETER_SET["terminal_AU"]
+            tm_nonself = (dHSG_nonself[ENTHALPY] * 1000) / (dHSG_nonself[ENTROPY] + (1.987 * np.log(TOT_STRAND_CONCENTRATION_NONSELF / 4))) - 273.15
 
-                thermo_list.extend(dHSG_nonself)
-                thermo_list.append(tm_nonself)
+            thermo_list.extend(dHSG_nonself)
+            thermo_list.append(tm_nonself)
             
         for i, j in itertools.product((-1, -2, -3), (0, 1, 2)):
             thermo_list.append(temp_dHSG[i][GIBBS] - temp_dHSG[j][GIBBS])
         thermo_list.append(sum([dHSG[GIBBS] for dHSG in temp_dHSG[-2:]]) - sum([dHSG[GIBBS] for dHSG in temp_dHSG[:2]]))
         thermo_list.append(sum([dHSG[GIBBS] for dHSG in temp_dHSG[-3:]]) - sum([dHSG[GIBBS] for dHSG in temp_dHSG[:3]]))
         thermo_list.append(temp_dHSG[-1][GIBBS] - temp_dHSG[9][GIBBS])
-        thermo_list.append(temp_dHSG[0] - temp_dHSG[12])
+        thermo_list.append(temp_dHSG[0][GIBBS] - temp_dHSG[12][GIBBS])
 
         for dHSG in temp_dHSG:
             thermo_list.append(dHSG[GIBBS])
@@ -132,8 +133,9 @@ def thermodynamic(sequences: dict[str, str]):
         if (as_AU_test):
             LS_1_15[0] += THERMOPARAMETER_SET["terminal_AU"][GIBBS]
         if (seq[0] in "ACGU"):
-            LS_1_15[0] += DG_3PRIME_DANGLING_U["{}U".format(complement_dict[seq[0]])]
+            LS_1_15[0] += DG_3PRIME_DANGLING_U["{}U".format(COMPLEMENT_DICT[seq[0]])]
 
+        # unused
         # if (ss_AU_test):
         #     LS_16_19[-1] += THERMOPARAMETER_SET["terminal_AU"][GIBBS]
         # if (seq[-1] in "ACGU"):
@@ -141,3 +143,8 @@ def thermodynamic(sequences: dict[str, str]):
 
         thermo_list.append(sum(LS_1_15[8:14]) / 6)
         
+        thermo_descriptors[key] = thermo_list
+
+    thermo_length= len(thermo_descriptors[next(iter(thermo_descriptors.keys()))])
+
+    return thermo_descriptors, thermo_length

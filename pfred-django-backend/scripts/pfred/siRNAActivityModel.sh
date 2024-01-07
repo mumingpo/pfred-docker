@@ -1,7 +1,7 @@
 cp EnumerationResult.csv oligo2predict_noOverhangs.csv
 get_overhangs.py target.txt txt oligo2predict_noOverhangs.csv
 lowercase.py oligo2predict.csv
-siRNA_predictor.py novartis ./siRNA_utils/data/siRNA_2431seq_modelBuilding.csv p_c_a_thermo predict oligo2predict_clean.csv
+siRNA_predictor.py novartis ./siRNA_2431seq_modelBuilding.csv p_c_a_thermo predict oligo2predict_clean.csv
 
 if [ -f siRNAOffTargetSearchResult.csv ]; then
     cp siRNAOffTargetSearchResult.csv outputSummaryBeforeMerge.csv

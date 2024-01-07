@@ -27,11 +27,13 @@ def sequence_acc(sequences: dict[str, str]):
 
         for lag_dist in range(1, MAX_LAG):
             normalization = 1 / (len(seq) - lag_dist)
+            temp_sum = [0.] * 9
             for i in range(len(seq) - lag_dist):
                 leading = 3 * i
                 lagging = 3 * (i + lag_dist)
-                for leading_offset, lagging_offset in zip(index_offsets_leading, index_offsets_lagging):
-                    temp_list.append(modify_seq[leading + leading_offset] * modify_seq[lagging + lagging_offset] * normalization)
+                for i, (leading_offset, lagging_offset) in enumerate(zip(index_offsets_leading, index_offsets_lagging)):
+                    temp_sum[i] += modify_seq[leading + leading_offset] * modify_seq[lagging + lagging_offset] * normalization
+            temp_list.extend(temp_sum)
         
         temp[key] = temp_list
     

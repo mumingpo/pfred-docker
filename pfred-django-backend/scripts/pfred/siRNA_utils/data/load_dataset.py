@@ -1,3 +1,4 @@
+# import os
 from collections import defaultdict
 
 COLUMN_INDEX_TO_FIELD_NAME = {
@@ -32,6 +33,8 @@ def novartis_data(filepath: str) -> dict[str, dict[str, str]]:
     sequences = data["sequences"]
     activity = data["activity"]
     activity_class = data["activity_class"]
+
+    # print(os.path.abspath(filepath))
 
     with open(filepath, "rt") as f:
         # header unused, skipping first line
@@ -88,7 +91,7 @@ def seq_to_predict(filepath: str, data: dict[str, dict[str, str]]) -> (dict[str,
             activity_to_predict_tags = ['0', '1']
 
             for line in f:
-                fields = line.strip().split()
+                fields = line.strip().split(',')
                 key = fields[1]
                 sequence_names.append(key)
                 sequences[key] = fields[0]
@@ -100,7 +103,7 @@ def seq_to_predict(filepath: str, data: dict[str, dict[str, str]]) -> (dict[str,
             activity_to_predict_tags = ['0',]
 
             for line in f:
-                fields = line.strip().split()
+                fields = line.strip().split(',')
                 key = fields[1]
                 sequence_names.append(key)
                 sequences[key] = fields[0]
