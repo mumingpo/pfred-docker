@@ -6,27 +6,30 @@ ENTHALPY = 0
 ENTROPY = 1
 GIBBS = 2
 THERMOPARAMETER_SET = {
-    "AA":(-6.82,-19.00,-0.93),
-    "AU":(-9.38,-26.70,-1.10),
-    "UA":(-7.69,-20.50,-1.33),
-    "CA":(-10.44,-26.90,-2.11),
-    "CU":(-10.48,-27.10,-2.08),
-    "GA":(-12.44,-32.50,-2.35),
-    "GU":(-11.40,-29.50,-2.24),
-    "CG":(-10.64,-26.70,-2.36),
-    "GC":(-14.88,-36.90,-3.42),
-    "GG":(-13.39,-32.70,-3.26),
-    "UU":(-6.82,-19.00,-0.93),
-    "UG":(-10.44,-26.90,-2.11),
-    "AG":(-10.48,-27.10,-2.08),
-    "UC":(-12.44,-32.50,-2.35),
-    "AC":(-11.40,-29.50,-2.24),
-    "CC":(-13.39,-32.70,-3.26),
-    "terminal_AU":(3.72,10.5,0.45),
-    "Initiation":(3.61,-1.50,4.09),
-    "Symmetry_self":(0.00,-1.40,0.43),
-    "Symmetry_nonSelf":(0.00,0.00,0.00),
+    "AA": (-6.82,-19.00,-0.93),
+    "AU": (-9.38,-26.70,-1.10),
+    "UA": (-7.69,-20.50,-1.33),
+    "CA": (-10.44,-26.90,-2.11),
+    "CU": (-10.48,-27.10,-2.08),
+    "GA": (-12.44,-32.50,-2.35),
+    "GU": (-11.40,-29.50,-2.24),
+    "CG": (-10.64,-26.70,-2.36),
+    "GC": (-14.88,-36.90,-3.42),
+    "GG": (-13.39,-32.70,-3.26),
+    "UU": (-6.82,-19.00,-0.93),
+    "UG": (-10.44,-26.90,-2.11),
+    "AG": (-10.48,-27.10,-2.08),
+    "UC": (-12.44,-32.50,-2.35),
+    "AC": (-11.40,-29.50,-2.24),
+    "CC": (-13.39,-32.70,-3.26),
+    "terminal_AU": (3.72,10.5,0.45),
+    "Initiation": (3.61,-1.50,4.09),
+    "Symmetry_self": (0.00,-1.40,0.43),
+    "Symmetry_nonSelf": (0.00,0.00,0.00),
 }
+for key, value in THERMOPARAMETER_SET.items():
+    THERMOPARAMETER_SET[key] = np.array(value)
+
 DG_3PRIME_DANGLING_U = {
     "AU": -0.6,
     "CU": -1.2,
@@ -71,7 +74,7 @@ def thermodynamic(sequences: dict[str, str]):
         n_AU = 0
         test_AU = False
         as_AU_test = False
-        ss_AU_test = False
+        # ss_AU_test = False
         
         if (seq[0] in "AU"):
             n_AU += 1
@@ -80,7 +83,7 @@ def thermodynamic(sequences: dict[str, str]):
         if (seq[-1] in "AU"):
             n_AU += 1
             test_AU = True
-            ss_AU_test = True
+            # ss_AU_test = True
 
         thermo_list = []
         temp_dHSG = []
@@ -96,7 +99,7 @@ def thermodynamic(sequences: dict[str, str]):
         if (self_symmetric):
             dHSG_self = total_dHSG + THERMOPARAMETER_SET["Initiation"] + THERMOPARAMETER_SET["Symmetry_self"]
             if (test_AU):
-                dHSG_self = n_AU * THERMOPARAMETER_SET["terminal_AU"]
+                dHSG_self += n_AU * THERMOPARAMETER_SET["terminal_AU"]
             tm_self = (dHSG_self[ENTHALPY] * 1000) / (dHSG_self[ENTROPY] + (1.987 * np.log(TOT_STRAND_CONCENTRATION_SELF))) - 273.15
 
             thermo_list.extend(dHSG_self)
@@ -104,7 +107,7 @@ def thermodynamic(sequences: dict[str, str]):
         else:
             dHSG_nonself = total_dHSG + THERMOPARAMETER_SET["Initiation"] + THERMOPARAMETER_SET["Symmetry_nonSelf"]
             if (test_AU):
-                dHSG_self = n_AU * THERMOPARAMETER_SET["terminal_AU"]
+                dHSG_nonself += n_AU * THERMOPARAMETER_SET["terminal_AU"]
             tm_nonself = (dHSG_nonself[ENTHALPY] * 1000) / (dHSG_nonself[ENTROPY] + (1.987 * np.log(TOT_STRAND_CONCENTRATION_NONSELF / 4))) - 273.15
 
             thermo_list.extend(dHSG_nonself)

@@ -31,8 +31,8 @@ def sequence_acc(sequences: dict[str, str]):
             for i in range(len(seq) - lag_dist):
                 leading = 3 * i
                 lagging = 3 * (i + lag_dist)
-                for i, (leading_offset, lagging_offset) in enumerate(zip(index_offsets_leading, index_offsets_lagging)):
-                    temp_sum[i] += modify_seq[leading + leading_offset] * modify_seq[lagging + lagging_offset] * normalization
+                for k, (leading_offset, lagging_offset) in enumerate(zip(index_offsets_leading, index_offsets_lagging)):
+                    temp_sum[k] += modify_seq[leading + leading_offset] * modify_seq[lagging + lagging_offset] * normalization
             temp_list.extend(temp_sum)
         
         temp[key] = temp_list

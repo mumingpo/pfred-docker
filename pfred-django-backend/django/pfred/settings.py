@@ -27,6 +27,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = [
     "pfred.mumingpo.com",
+    "localhost",
+    "127.0.0.1",
 ]
 
 # logging

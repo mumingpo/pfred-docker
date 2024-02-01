@@ -4,6 +4,7 @@ docker run \
     --rm \
     --name pfred \
     --mount "type=bind,source=$(pwd)/pfred-django-backend,target=/home/pfred" \
+    --env-file ./env.list \
     --workdir "/home/pfred" \
     continuumio/miniconda3:23.9.0-0
     bash

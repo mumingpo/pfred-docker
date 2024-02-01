@@ -39,7 +39,7 @@ def main():
         raise NotImplementedError("Feature not refactored.") from e
     
     data = novartis_data(novartis_data_file_path)
-    data, sequence_names, activity_to_predict_tags = seq_to_predict(sequences_data_file_path, data)
+    data, sequence_names, _ = seq_to_predict(sequences_data_file_path, data)
 
     sequences = data['sequences']
     activity = data['activity']
@@ -55,7 +55,7 @@ def main():
     length_descriptors = seq_length + comp_length + acc_descriptors_length + thermo_length
 
     files_to_write = (
-        ("train_{}vars.csv", sequences.keys(), activity),
+        ("train_{}vars.csv", data['training_all'].keys(), activity),
         ("PredictionTest_{}vars.csv", sequence_names, activity),
         # ("class_train_{}vars.csv", sequences.keys(), activity_class),
         # ("class_PredictionTest_{}vars.csv", sequence_names, activity_class),
@@ -79,7 +79,8 @@ def main():
     csv_file = "train_{}vars.csv".format(length_descriptors)
     csv_file_ext = "PredictionTest_{}vars.csv".format(length_descriptors)
     with open(csv_file_ext, 'r') as f_in:
-        header = f_in.readline().strip().split(',')
+        f_in.readline()
+        # header = f_in.readline().strip().split(',')
 
         names = []
         descriptors = dict()
